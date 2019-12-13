@@ -10,7 +10,7 @@ var client = new disc.Client();
 var t;
 
 client.on('ready', async () => {
-	client.user.setActivity('for t@help', {type: 'WATCHING'});
+	client.user.setActivity('for t@help', { type: 'WATCHING' });
 	t = new twitter({
 		consumer_key: auth.twitter['api-key'],
 		consumer_secret: auth.twitter['api-secret-key'],
@@ -80,7 +80,7 @@ var functions = {
 				channel: args.channel,
 				content: `t@user ${
 					groups[args.content.split(' ')[1]][random.int(0, groups[args.content.split(' ')[1]].length - 1)]
-				}`
+					}`
 			});
 		}
 	}
@@ -88,6 +88,16 @@ var functions = {
 
 function send_tweet(tweet, args) {
 	let embed = {};
+	if (tweet.retweeted_status) {
+		if (tweet.retweeted_status.possibly_sensitive && !args.channel.nsfw) {
+			console.log(`https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+			return args.channel.send('You must be in an NSFW channel to see this post.')
+		}
+	}
+	if (tweet.possibly_sensitive && !args.channel.nsfw) {
+		console.log(`https://twitter.com/${tweet.user.screen_name}/status/${tweet.id_str}`)
+		return args.channel.send('You must be in an NSFW channel to see this post.')
+	}
 	if (typeof tweet.retweeted_status != 'undefined') {
 		Object.assign(embed, {
 			author: {
@@ -139,7 +149,7 @@ function send_tweet(tweet, args) {
 			};
 		}
 	}
-	args.channel.send({embed});
+	args.channel.send({ embed });
 
 	if (
 		typeof tweet.retweeted_status != 'undefined' &&
