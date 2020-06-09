@@ -4,7 +4,6 @@ const auth = require('./auth.json');
 const random = require('random');
 const he = require('he');
 const axios = require('axios');
-const groups = require('./groups.json');
 
 var client = new disc.Client();
 var t;
@@ -43,7 +42,7 @@ client.login(auth.discord.token);
 var functions = {
 	help: args => {
 		args.channel.send(
-			'The three available functions are: t@user, t@hashtag, and t@twitter. In order to use any of them, send the appropriate command along with the thing you wish to search for. \nFor instance: t@user realchegg'
+			'The two available functions are: t@user, t@hashtag. In order to use any of them, send the appropriate command along with the thing you wish to search for. \nFor instance: t@user realchegg'
 		);
 	},
 	user: async args => {
@@ -86,16 +85,6 @@ var functions = {
 				(error, tweets, res) =>
 					!error && send_tweet(tweets.statuses[random.int(0, tweets.statuses.length - 1)], args)
 			);
-		}
-	},
-	twitter: async args => {
-		for (let i = 0; i < (args.content.split(' ')[2] || 3); i++) {
-			functions.user({
-				channel: args.channel,
-				content: `t@user ${
-					groups[args.content.split(' ')[1]][random.int(0, groups[args.content.split(' ')[1]].length - 1)]
-				}`
-			});
 		}
 	}
 };
